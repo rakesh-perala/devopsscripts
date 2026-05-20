@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Update Ubuntu packages
+sudo apt update -y
+
+# Install Java 17 (Recommended for latest Tomcat 10)
+sudo apt install openjdk-17-jdk wget tar -y
+
+# Verify Java
+java -version
+
+# Move to /opt directory
+cd /opt
+
+# Download Latest Tomcat 10
+sudo wget https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.42/bin/apache-tomcat-10.1.42.tar.gz
+
+# Extract Tomcat
+sudo tar -xvzf apache-tomcat-10.1.42.tar.gz
+
+# Rename folder for easy usage
+sudo mv apache-tomcat-10.1.42 tomcat
+
+# Give permissions
+sudo chmod -R 755 /opt/tomcat
+
+# Add Tomcat manager user
+sudo sed -i '/<\/tomcat-users>/i \
+<role rolename="manager-gui"/>\
+<role rolename="manager-script"/>\
+<role rolename="admin-gui"/>\
+<role rolename="admin-script"/>\
+<user username="tomcat" password="root123556" roles="manager-gui,manager-script,admin-gui,admin-script"/>' /opt/tomcat/conf/tomcat-users.xml
+
+# Allow remote access to Manager App
+sudo sed -i '/RemoteAddrValve/d' /opt/tomcat/webapps/manager/META-INF/context.xml
+
+# Allow remote access to Host Manager App
+sudo sed -i '/RemoteAddrValve/d' /opt/tomcat/webapps/host-manager/META-INF/context.xml
+
+# Start Tomcat
+sudo sh /opt/tomcat/bin/startup.sh
+
+# Enable Tomcat startup scripts
+sudo chmod +x /opt/tomcat/bin/*.sh
+
+# Check Tomcat running
+sleep 10
+
+echo "======================================"
+echo "Tomcat Installed Successfully"
+echo "URL: http://<YOUR-IP>:8080"
+echo "Username: tomcat"
+echo "Password: root123556"
+echo "======================================"
