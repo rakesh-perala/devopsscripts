@@ -1,0 +1,39 @@
+#!/bin/bash
+
+sudo apt update -y
+
+sudo apt install openjdk-17-jdk wget tar -y
+
+java -version
+
+cd /opt
+
+sudo wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.42/bin/apache-tomcat-10.1.42.tar.gz
+
+sudo tar -xvzf apache-tomcat-10.1.42.tar.gz
+
+sudo mv apache-tomcat-10.1.42 tomcat
+
+sudo chmod -R 755 /opt/tomcat
+
+sudo sed -i '/<\/tomcat-users>/i \
+<role rolename="manager-gui"/>\
+<role rolename="manager-script"/>\
+<role rolename="admin-gui"/>\
+<role rolename="admin-script"/>\
+<user username="tomcat" password="root123556" roles="manager-gui,manager-script,admin-gui,admin-script"/>' /opt/tomcat/conf/tomcat-users.xml
+
+sudo sed -i '/RemoteAddrValve/d' /opt/tomcat/webapps/manager/META-INF/context.xml
+
+sudo sed -i '/RemoteAddrValve/d' /opt/tomcat/webapps/host-manager/META-INF/context.xml
+
+sudo chmod +x /opt/tomcat/bin/*.sh
+
+sudo sh /opt/tomcat/bin/startup.sh
+
+echo "======================================"
+echo "Tomcat Installed Successfully"
+echo "URL: http://<YOUR-IP>:8080"
+echo "Username: tomcat"
+echo "Password: root123556"
+echo "======================================"
